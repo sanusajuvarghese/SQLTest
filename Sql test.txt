@@ -1,0 +1,20 @@
+ Task 1.
+
+select ast.reg_no,count(*) from 
+asset_schema.asset ast left join loan_schema.m_loan l onl.id=ast.m_loan_id
+left join asset_schema.vehicle_model vmd on vmd.id=ast.model_id  
+left join asset_schema.vehicle_make vmk on vmk.id=vmd.vehicle_make_id
+ where l.disbursedon_date between '2020-01-01' and '2020-02-29' group by vmd.vehicle_make_id
+
+
+Task 2.
+
+select rep.loan_id , (isnull(rep.principal_amt,0) + isnull(rep.interest_amt,0)) as weekly_payment_amt 
+from loan_schema.m_loan_repayment_schedule rep where completed_derived=0 group by rep.loan_id;
+
+
+Task 3.
+
+select ((isnull(rep.principal_amt,0) + isnull(rep.interest_amt,0) + isnull(rep.fee_amt,0) + isnull(rep.penalty_amt,0)) - isnull(tran.amount,0)) as weekly_payment_amt 
+from loan_schema.m_loan l left join loan_schema.m_loan_repayment_schedule rep on l.id = rep.loan_id
+left join loan_schema.m_loan_transaction tran on l.id=tran.loan_id group by rep.loan_id
